@@ -1,3 +1,4 @@
+import graphlab
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -82,17 +83,18 @@ def lasso_cyclical_coordinate_descent(feature_matrix, output, initial_weights, l
     weights = initial_weights
     converged = False
     while not converged:
-        weights_change = []
+        weights_change = np.zeros(len(weights))
         for i in range(len(weights)):
             old_weights_i = weights[i] # remember old value of weight[i], as it will be overwritten
             # the following line uses new values for weight[0], weight[1], ..., weight[i-1]
             #     and old values for weight[i], ..., weight[d-1]
             weights[i] = lasso_coordinate_descent_step(i, feature_matrix, output, weights, l1_penalty)
             # use old_weights_i to compute change in coordinate
-            weights_change.append(abs(old_weights_i-weights[i]))
-        weights_change = np.asfarray(weights_change)
-        max_change = max(weights_change)
-        if max_change < tolerance:
+            #weights_change.append(abs(old_weights_i-weights[i]))
+            weights_change[i]= weights[i]-old_weights_i
+        #weights_change = np.asfarray(weights_change)        
+        #max_change = max(weights_change)
+        if np.max(weights_change) < tolerance:
             converged = True
     return weights
 
@@ -142,12 +144,12 @@ print weights1e7
 l1_penalty = 1e8
 weights1e8 = lasso_cyclical_coordinate_descent(normalized_all_feature_matrix, output,
                                             initial_weights, l1_penalty, tolerance)
-print weights1e8
+#print weights1e8
 l1_penalty = 1e4
 tolerance = 5e5
 weights1e4 = lasso_cyclical_coordinate_descent(normalized_all_feature_matrix, output,
                                             initial_weights, l1_penalty, tolerance)
-print weights1e4
+#print weights1e4
 weights1e7_norm = weights1e7 / all_norms
 weights1e8_norm = weights1e8 / all_norms
 weights1e4_norm = weights1e4 / all_norms
