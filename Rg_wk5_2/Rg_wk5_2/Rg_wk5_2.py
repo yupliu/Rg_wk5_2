@@ -91,7 +91,7 @@ def lasso_cyclical_coordinate_descent(feature_matrix, output, initial_weights, l
             weights[i] = lasso_coordinate_descent_step(i, feature_matrix, output, weights, l1_penalty)
             # use old_weights_i to compute change in coordinate
             #weights_change.append(abs(old_weights_i-weights[i]))
-            weights_change[i]= weights[i]-old_weights_i
+            weights_change[i]= abs(weights[i]-old_weights_i)
         #weights_change = np.asfarray(weights_change)        
         #max_change = max(weights_change)
         if np.max(weights_change) < tolerance:
